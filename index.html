@@ -119,9 +119,9 @@
   .preview-container { background: white; width: 180mm; min-height: 249mm; box-shadow: 0 8px 60px rgba(0,0,0,0.6); }
   .print-page { width: 180mm; height: 249mm; position: relative; background: transparent; overflow: hidden; }
   .pf { position: absolute; white-space: nowrap; font-family: 'Times New Roman', Times, serif; line-height: 1; }
-  .pf-name    { font-size: 13pt; font-weight: 700; color: #000; text-align: center; }
-  .pf-regular { font-size: 11.5pt; color: #000; }
-  .pf-bold    { font-size: 11.5pt; font-weight: 700; color: #000; }
+  .pf-name    { font-size: 16pt; font-weight: 700; color: #000; text-align: center; }
+  .pf-regular { font-size: 16pt; color: #000; }
+  .pf-bold    { font-size: 16pt; font-weight: 700; color: #000; }
   .pf-center  { text-align: center; }
 
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--blue-church); color: var(--gold-pale); padding: 8px 20px; border-radius: 4px; font-family: 'EB Garamond', serif; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: transform 0.3s; z-index: 3000; }
@@ -389,22 +389,31 @@ function setFormData(rec) {
 
 // ── PREVIEW ──
 const LAYOUT = (d) => [
-  { x:30,  y:46,   w:120, cls:'pf-name pf-center', text: d.imya },
-  { x:30,  y:56,   w:120, cls:'pf-name pf-center', text: d.otchestvo },
-  { x:30,  y:66,   w:120, cls:'pf-name pf-center', text: d.familia },
-  { x:42,  y:79.5, w:48,  cls:'pf-regular',        text: d.dateBorn },
-  { x:105, y:79.5, w:50,  cls:'pf-regular',        text: d.dateKrest },
-  { x:30,  y:93,   w:135, cls:'pf-regular pf-center', text: d.hram1 },
-  { x:30,  y:100.5,w:135, cls:'pf-regular pf-center', text: d.hram2 },
-  { x:30,  y:108,  w:135, cls:'pf-regular pf-center', text: d.hram3 },
-  { x:80,  y:118,  w:85,  cls:'pf-bold',           text: d.imyaSvyat },
-  { x:42,  y:127,  w:123, cls:'pf-regular',        text: d.vChest },
-  { x:67,  y:136,  w:98,  cls:'pf-regular',        text: d.pamyat },
-  { x:130, y:148,  w:35,  cls:'pf-regular',        text: d.nomer },
-  { x:30,  y:163,  w:135, cls:'pf-regular',        text: d.vosp1 },
-  { x:30,  y:172,  w:135, cls:'pf-regular',        text: d.vosp2 },
-  { x:73,  y:187,  w:50,  cls:'pf-regular',        text: d.san },
-  { x:30,  y:196,  w:135, cls:'pf-regular',        text: d.svyash },
+  // ФИО — centred, 16pt bold, font Times New Roman
+  { x:30,   y:73.55,  w:135, cls:'pf-name pf-center', text: d.imya },
+  { x:30,   y:80.33,  w:135, cls:'pf-name pf-center', text: d.otchestvo },
+  { x:30,   y:87.10,  w:135, cls:'pf-name pf-center', text: d.familia },
+  // Даты — одна строка y=95.14
+  { x:47.52, y:95.14, w:58,  cls:'pf-regular',        text: d.dateBorn },
+  { x:108.0, y:95.14, w:57,  cls:'pf-regular',        text: d.dateKrest },
+  // Храм — три строки центрированные
+  { x:30,   y:103.61, w:135, cls:'pf-regular pf-center', text: d.hram1 },
+  { x:30,   y:109.82, w:135, cls:'pf-regular pf-center', text: d.hram2 },
+  { x:30,   y:116.03, w:135, cls:'pf-regular pf-center', text: d.hram3 },
+  // Имя по святцам — bold, от 92.44mm
+  { x:92.44, y:123.08, w:72, cls:'pf-bold',            text: d.imyaSvyat },
+  // В честь — центрированное
+  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center', text: d.vChest },
+  // Память — от 97.52mm
+  { x:97.52, y:136.77, w:67, cls:'pf-regular',         text: d.pamyat },
+  // Номер записи — от 125.02mm
+  { x:125.02,y:145.52, w:40, cls:'pf-regular',         text: d.nomer },
+  // Восприемники — центрированные
+  { x:25,   y:160.20, w:140, cls:'pf-regular pf-center', text: d.vosp1 },
+  { x:25,   y:167.68, w:140, cls:'pf-regular pf-center', text: d.vosp2 },
+  // Священник
+  { x:62.51, y:176.00, w:50, cls:'pf-regular',         text: d.san },
+  { x:25.0,  y:183.48, w:140,cls:'pf-regular',         text: d.svyash },
 ];
 
 function updatePreview() {
