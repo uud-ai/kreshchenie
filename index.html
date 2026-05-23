@@ -123,6 +123,7 @@
   .pf-regular { font-size: 16pt; color: #000; }
   .pf-bold    { font-size: 16pt; font-weight: 700; color: #000; }
   .pf-center  { text-align: center; }
+  .pf-upper   { text-transform: uppercase; }
 
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--blue-church); color: var(--gold-pale); padding: 8px 20px; border-radius: 4px; font-family: 'EB Garamond', serif; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: transform 0.3s; z-index: 3000; }
   .toast.show { transform: translateX(-50%) translateY(0); }
@@ -133,6 +134,21 @@
     .print-page, .print-page * { visibility: visible; }
     .print-page { position: fixed; top: 0; left: 0; width: 180mm; height: 249mm; }
   }
+
+  /* WIZARD */
+  .wizard-step { border: 1px solid #DDD0A8; border-radius: 4px; margin-bottom: 8px; overflow: hidden; }
+  .wizard-step-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; cursor: pointer; background: var(--parchment-dark); user-select: none; transition: background 0.15s; }
+  .wizard-step-header:hover { background: #E5D9B8; }
+  .wizard-num { width: 22px; height: 22px; border-radius: 50%; background: var(--blue-church); color: white; font-size: 12px; font-family: 'Playfair Display', serif; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .wizard-num.done { background: #2E7D32; }
+  .wizard-title { flex: 1; font-size: 14px; color: var(--ink); font-family: 'EB Garamond', serif; }
+  .wizard-arrow { font-size: 11px; color: #888; }
+  .wizard-body { padding: 12px 14px; background: white; font-size: 13.5px; line-height: 1.6; color: var(--ink); display: flex; flex-direction: column; gap: 8px; }
+  .wizard-btn { display: inline-block; padding: 8px 16px; background: #0F9D58; color: white; border-radius: 4px; text-decoration: none; font-family: 'EB Garamond', serif; font-size: 14px; transition: background 0.2s; align-self: flex-start; }
+  .wizard-btn:hover { background: #0B8043; }
+  .wizard-copy-btn { padding: 7px 14px; background: var(--blue-church); color: white; border: none; border-radius: 3px; font-family: 'EB Garamond', serif; font-size: 13px; cursor: pointer; align-self: flex-start; }
+  .wizard-copy-btn:hover { background: var(--blue-mid); }
+  .wizard-checklist { background: var(--parchment-dark); border-radius: 3px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -145,28 +161,87 @@
     <div class="modal-section">
       <div class="modal-section-title">Сведения о храме (подставляются автоматически)</div>
       <div class="settings-grid">
-        <div class="sfield" style="grid-column:1/-1"><label>Название приложения (заголовок)</label><input id="s-app-title" placeholder="Свидетельства о Крещении"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Подзаголовок (храм, город)</label><input id="s-app-subtitle" placeholder="Храм Святителя Николая · пгт. Усть-Карск"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 1 в свидетельстве)</label><input id="s-hram1" placeholder="храме Святителя Николая Чудотворца"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 2)</label><input id="s-hram2" placeholder="пгт. Усть-Карск Сретенского района"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 3 — епархия)</label><input id="s-hram3" placeholder="Нерчинской епархии Забайкальской митрополии"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Название приложения (заголовок)</label><input id="s-app-title" placeholder="Название приложения"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Подзаголовок (храм, город)</label><input id="s-app-subtitle" placeholder="Название храма · населённый пункт"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 1 в свидетельстве)</label><input id="s-hram1" placeholder="храме (название храма)"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 2)</label><input id="s-hram2" placeholder="город/село, район"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 3 — епархия)</label><input id="s-hram3" placeholder="епархия, митрополия"></div>
       </div>
     </div>
 
     <div class="modal-section">
       <div class="modal-section-title">Священник (подставляется автоматически)</div>
       <div class="settings-grid">
-        <div class="sfield"><label>Сан</label><input id="s-san" placeholder="иерей"></div>
-        <div class="sfield"><label>Имя Фамилия</label><input id="s-svyash" placeholder="Николай Корниенко"></div>
+        <div class="sfield"><label>Сан</label><input id="s-san" placeholder="сан (иерей, протоиерей...)"></div>
+        <div class="sfield"><label>Имя Фамилия</label><input id="s-svyash" placeholder="Имя Фамилия"></div>
       </div>
     </div>
 
     <div class="modal-section">
       <div class="modal-section-title">Google Sheets</div>
-      <p style="font-size:13px;color:var(--ink-mid);margin-bottom:6px;">URL веб-приложения из Google Apps Script:</p>
-      <div class="url-input-wrap">
-        <input type="text" class="url-input" id="s-webapp-url" placeholder="https://script.google.com/macros/s/.../exec">
-        <button class="mbtn mbtn-primary" style="flex:0;white-space:nowrap" onclick="testSheetsConnection()">Проверить</button>
+      <div id="sheets-setup-status"></div>
+      <div id="sheets-connected-block" style="display:none">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <span style="color:#2E7D32;font-size:14px">✅ Таблица подключена</span>
+          <button class="mbtn mbtn-secondary" style="flex:0;font-size:12px;padding:4px 10px" onclick="showSheetsWizard()">Изменить</button>
+        </div>
+        <div class="url-input-wrap">
+          <input type="text" class="url-input" id="s-webapp-url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:12px;color:#888">
+        </div>
+      </div>
+      <div id="sheets-wizard-block">
+        <p style="font-size:13px;color:var(--ink-mid);margin-bottom:12px">Следуйте шагам — займёт около 3 минут:</p>
+
+        <!-- Step 1 -->
+        <div class="wizard-step" id="wstep-1">
+          <div class="wizard-step-header" onclick="toggleWStep(1)">
+            <span class="wizard-num" id="wnum-1">1</span>
+            <span class="wizard-title">Создайте Google Таблицу</span>
+            <span class="wizard-arrow" id="warr-1">▼</span>
+          </div>
+          <div class="wizard-body" id="wbody-1">
+            <p>Нажмите кнопку ниже — откроется Google Sheets. Создайте новую таблицу и дайте ей любое название (например: «Книга крещений»).</p>
+            <a href="https://sheets.new" target="_blank" class="wizard-btn" onclick="markStep(1)">Открыть Google Sheets →</a>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="wizard-step" id="wstep-2">
+          <div class="wizard-step-header" onclick="toggleWStep(2)">
+            <span class="wizard-num" id="wnum-2">2</span>
+            <span class="wizard-title">Откройте редактор скриптов</span>
+            <span class="wizard-arrow" id="warr-2">▶</span>
+          </div>
+          <div class="wizard-body" id="wbody-2" style="display:none">
+            <p>В вашей новой таблице откройте меню <strong>Расширения → Apps Script</strong>. Удалите весь код в редакторе и вставьте наш:</p>
+            <button class="wizard-copy-btn" onclick="copyScriptCode()">📋 Копировать код</button>
+            <p style="margin-top:8px;font-size:12px;color:#888">После вставки нажмите <strong>Ctrl+S</strong> для сохранения.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="wizard-step" id="wstep-3">
+          <div class="wizard-step-header" onclick="toggleWStep(3)">
+            <span class="wizard-num" id="wnum-3">3</span>
+            <span class="wizard-title">Опубликуйте скрипт</span>
+            <span class="wizard-arrow" id="warr-3">▶</span>
+          </div>
+          <div class="wizard-body" id="wbody-3" style="display:none">
+            <p>В редакторе Apps Script нажмите <strong>«Развернуть» → «Новое развёртывание»</strong>.</p>
+            <div class="wizard-checklist">
+              <div>• Тип: <strong>Веб-приложение</strong></div>
+              <div>• Доступ: <strong>Все</strong></div>
+              <div>• Нажмите <strong>«Развернуть»</strong></div>
+              <div>• Если появится предупреждение — нажмите <strong>«Advanced» → «Go to... (unsafe)» → «Allow»</strong></div>
+            </div>
+            <p style="margin-top:8px">Скопируйте <strong>URL веб-приложения</strong> (заканчивается на <code style="background:#eee;padding:1px 4px;border-radius:2px">/exec</code>) и вставьте сюда:</p>
+            <div class="url-input-wrap" style="margin-top:8px">
+              <input type="text" class="url-input" id="s-webapp-url" placeholder="https://script.google.com/macros/s/.../exec">
+              <button class="mbtn mbtn-primary" style="flex:0;white-space:nowrap" onclick="testSheetsConnection()">✓ Подключить</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -220,7 +295,7 @@
 
       <div class="section-title">Крестильное имя</div>
       <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Имя по святцам" oninput="updatePreview()"></div>
-      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="В честь кого наречён(а)" oninput="updatePreview()"></div>
+      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="В честь кого наречён(а)" oninput="updatePreview()" style="text-transform:uppercase"></div>
       <div class="field-group"><label>Память (дата)</label><input type="text" id="f-pamyat" placeholder="Дата памяти" oninput="updatePreview()"></div>
 
       <div class="section-title">Восприемники и запись</div>
@@ -327,7 +402,7 @@ function openSettings() {
   document.getElementById('s-svyash').value = s.svyash;
   const url = localStorage.getItem(WEBAPP_KEY) || '';
   document.getElementById('s-webapp-url').value = url;
-  document.getElementById('modal-settings').classList.add('open');
+  document.getElementById('modal-settings').classList.add('open'); initWizard();
 }
 function closeSettings() { document.getElementById('modal-settings').classList.remove('open'); }
 
@@ -403,7 +478,7 @@ const LAYOUT = (d) => [
   // Имя по святцам — bold, от 92.44mm
   { x:92.44, y:123.08, w:72, cls:'pf-bold',            text: d.imyaSvyat },
   // В честь — центрированное
-  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center', text: d.vChest },
+  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center pf-upper', text: d.vChest },
   // Память — от 97.52mm
   { x:97.52, y:136.77, w:67, cls:'pf-regular',         text: d.pamyat },
   // Номер записи — от 125.02mm
@@ -451,12 +526,27 @@ async function loadFromSheets() {
 
 async function testSheetsConnection() {
   const url = document.getElementById('s-webapp-url').value.trim();
-  if (!url) { toast('Введите URL'); return; }
+  if (!url.includes('script.google.com')) { toast('Вставьте URL от Google Apps Script'); return; }
+  toast('Проверяю подключение...');
   try {
     const r = await fetch(url + '?action=ping');
     const d = await r.json();
-    toast(d.ok ? 'Подключение успешно ✓' : 'Ошибка скрипта');
-  } catch(e) { toast('Не удалось подключиться'); }
+    if (d.ok) {
+      localStorage.setItem(WEBAPP_KEY, url);
+      setStatus('connected', 'Google Sheets подключён');
+      // mark step 3 done
+      const num3 = document.getElementById('wnum-3');
+      if (num3) { num3.textContent = '✓'; num3.classList.add('done'); }
+      setTimeout(() => {
+        document.getElementById('sheets-connected-block').style.display = 'block';
+        document.getElementById('sheets-wizard-block').style.display = 'none';
+        const inp = document.getElementById('s-webapp-url');
+        if (inp) inp.value = url;
+      }, 600);
+      toast('Google Sheets подключён ✓');
+      await loadFromSheets();
+    } else { toast('Ошибка скрипта. Проверьте настройки.'); }
+  } catch(e) { toast('Не удалось подключиться. Проверьте URL.'); }
 }
 
 // ── SAVE ──
@@ -568,6 +658,96 @@ function printCurrent() { window.print(); }
 
 // ── TOAST ──
 function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
+
+
+// ── WIZARD ──
+function initWizard() {
+  const url = localStorage.getItem(WEBAPP_KEY) || '';
+  if (url) {
+    document.getElementById('sheets-connected-block').style.display = 'block';
+    document.getElementById('sheets-wizard-block').style.display = 'none';
+    const inp = document.getElementById('s-webapp-url');
+    if (inp) inp.value = url;
+  } else {
+    document.getElementById('sheets-connected-block').style.display = 'none';
+    document.getElementById('sheets-wizard-block').style.display = 'block';
+    toggleWStep(1); // open step 1 by default
+  }
+}
+
+function showSheetsWizard() {
+  document.getElementById('sheets-connected-block').style.display = 'none';
+  document.getElementById('sheets-wizard-block').style.display = 'block';
+  toggleWStep(3);
+}
+
+function toggleWStep(n) {
+  [1,2,3].forEach(i => {
+    const body = document.getElementById('wbody-'+i);
+    const arr = document.getElementById('warr-'+i);
+    if (i === n) {
+      body.style.display = body.style.display === 'none' ? 'flex' : 'none';
+      arr.textContent = body.style.display === 'none' ? '▶' : '▼';
+    }
+  });
+}
+
+function markStep(n) {
+  const num = document.getElementById('wnum-'+n);
+  if (num) { num.textContent = '✓'; num.classList.add('done'); }
+  // auto-open next step
+  setTimeout(() => {
+    if (n < 3) {
+      const nextBody = document.getElementById('wbody-'+(n+1));
+      const nextArr = document.getElementById('warr-'+(n+1));
+      if (nextBody) { nextBody.style.display = 'flex'; nextArr.textContent = '▼'; }
+    }
+  }, 400);
+}
+
+function copyScriptCode() {
+  const code = `const SHEET_NAME = 'Крещения';
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      sheet = ss.insertSheet(SHEET_NAME);
+      sheet.appendRow(['Дата записи','Номер','Фамилия','Имя','Отчество','Дата рождения','Дата крещения','Имя по святцам','В честь','Память','Восприемник 1','Восприемница 2','Священник','Сан']);
+      sheet.getRange(1,1,1,14).setFontWeight('bold');
+      sheet.setFrozenRows(1);
+    }
+    sheet.appendRow([data.savedAt,data.nomer,data.familia,data.imya,data.otchestvo,data.dateBorn,data.dateKrest,data.imyaSvyat,data.vChest,data.pamyat,data.vosp1,data.vosp2,data.svyash,data.san]);
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doGet(e) {
+  try {
+    const action = e.parameter.action || 'ping';
+    if (action === 'ping') return ContentService.createTextOutput(JSON.stringify({ok:true,status:'ready'})).setMimeType(ContentService.MimeType.JSON);
+    if (action === 'getAll') {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      const sheet = ss.getSheetByName(SHEET_NAME);
+      if (!sheet) return ContentService.createTextOutput(JSON.stringify({ok:true,rows:[]})).setMimeType(ContentService.MimeType.JSON);
+      const data = sheet.getDataRange().getValues();
+      const headers = data[0];
+      const rows = data.slice(1).map(row => { const obj = {}; headers.forEach((h,i) => obj[h] = row[i]||''); return obj; });
+      return ContentService.createTextOutput(JSON.stringify({ok:true,rows:rows})).setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
+  }
+}`;
+  navigator.clipboard.writeText(code).then(() => {
+    toast('Код скопирован ✓');
+    markStep(2);
+  });
+}
 
 // ── INIT ──
 (function init() {
