@@ -294,8 +294,8 @@
       <div class="field-group"><label>Храм (строка 3)</label><input type="text" id="f-hram3" oninput="updatePreview()"></div>
 
       <div class="section-title">Крестильное имя</div>
-      <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Имя по святцам" oninput="updatePreview()"></div>
-      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="В честь кого наречён(а)" oninput="updatePreview()" style="text-transform:uppercase"></div>
+      <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Имя по святцам" oninput="updatePreview()" style="text-transform:uppercase"></div>
+      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="В честь кого наречён(а)" oninput="updatePreview()"></div>
       <div class="field-group"><label>Память (дата)</label><input type="text" id="f-pamyat" placeholder="Дата памяти" oninput="updatePreview()"></div>
 
       <div class="section-title">Восприемники и запись</div>
@@ -476,9 +476,9 @@ const LAYOUT = (d) => [
   { x:30,   y:109.82, w:135, cls:'pf-regular pf-center', text: d.hram2 },
   { x:30,   y:116.03, w:135, cls:'pf-regular pf-center', text: d.hram3 },
   // Имя по святцам — bold, от 92.44mm
-  { x:92.44, y:123.08, w:72, cls:'pf-bold',            text: d.imyaSvyat },
+  { x:92.44, y:123.08, w:72, cls:'pf-bold pf-upper',   text: d.imyaSvyat },
   // В честь — центрированное
-  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center pf-upper', text: d.vChest },
+  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center', text: d.vChest },
   // Память — от 97.52mm
   { x:97.52, y:136.77, w:67, cls:'pf-regular',         text: d.pamyat },
   // Номер записи — от 125.02mm
