@@ -3,99 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Свидетельства о Крещении — Усть-Карск</title>
+<title>Свидетельства о Крещении</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
 
   :root {
-    --gold: #8B6914;
-    --gold-light: #C9A84C;
-    --gold-pale: #F5EDD6;
-    --ink: #1A1209;
-    --ink-mid: #3D2B0A;
-    --parchment: #FBF6EC;
-    --parchment-dark: #EFE6CE;
-    --blue-church: #1B3A6B;
-    --blue-mid: #2D5A9E;
-    --red-church: #8B1A1A;
+    --gold: #8B6914; --gold-light: #C9A84C; --gold-pale: #F5EDD6;
+    --ink: #1A1209; --ink-mid: #3D2B0A;
+    --parchment: #FBF6EC; --parchment-dark: #EFE6CE;
+    --blue-church: #1B3A6B; --blue-mid: #2D5A9E; --red-church: #8B1A1A;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'EB Garamond', Georgia, serif; background: #0D1B0F; color: var(--ink); min-height: 100vh; }
 
-  body {
-    font-family: 'EB Garamond', Georgia, serif;
-    background: #0D1B0F;
-    color: var(--ink);
-    min-height: 100vh;
-  }
-
-  header {
-    background: linear-gradient(90deg, var(--blue-church), #0F2347, var(--blue-church));
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 2px solid var(--gold);
-    gap: 12px;
-  }
-
-  .header-left { display: flex; align-items: center; gap: 14px; }
-  .cross { font-size: 26px; color: var(--gold-light); }
-  header h1 { font-family: 'Playfair Display', serif; color: var(--gold-pale); font-size: 16px; font-weight: 600; line-height: 1.3; }
-  header p { color: #A89060; font-size: 12px; margin-top: 2px; }
-
-  .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-
-  .sheets-status { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #A89060; font-family: 'EB Garamond', serif; white-space: nowrap; }
-  .sheets-dot { width: 8px; height: 8px; border-radius: 50%; background: #666; flex-shrink: 0; transition: background 0.3s; }
+  header { background: linear-gradient(90deg, var(--blue-church), #0F2347, var(--blue-church)); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--gold); gap: 12px; }
+  .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .cross { font-size: 24px; color: var(--gold-light); flex-shrink: 0; }
+  #app-title { font-family: 'Playfair Display', serif; color: var(--gold-pale); font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #app-subtitle { color: #A89060; font-size: 11px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .sheets-status { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #A89060; white-space: nowrap; }
+  .sheets-dot { width: 7px; height: 7px; border-radius: 50%; background: #666; flex-shrink: 0; transition: background 0.3s; }
   .sheets-dot.connected { background: #4CAF50; }
   .sheets-dot.syncing { background: #FFC107; animation: pulse 1s infinite; }
   .sheets-dot.error { background: #f44336; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-
-  .btn-setup { font-family: 'EB Garamond', serif; font-size: 12px; padding: 4px 12px; background: transparent; color: var(--gold-light); border: 1px solid var(--gold-light); border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .btn-setup:hover { background: var(--gold-light); color: var(--ink); }
+  .hbtn { font-family: 'EB Garamond', serif; font-size: 12px; padding: 4px 10px; background: transparent; color: var(--gold-light); border: 1px solid var(--gold-light); border-radius: 3px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .hbtn:hover { background: var(--gold-light); color: var(--ink); }
 
   /* MODAL */
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 2000; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--parchment); border: 2px solid var(--gold); border-radius: 6px; width: 620px; max-width: 95vw; max-height: 90vh; overflow-y: auto; padding: 32px; font-family: 'EB Garamond', serif; }
-  .modal h2 { font-family: 'Playfair Display', serif; color: var(--blue-church); font-size: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--gold-light); padding-bottom: 10px; }
-  .step { margin-bottom: 16px; padding: 14px 16px; background: white; border-left: 3px solid var(--gold-light); border-radius: 0 4px 4px 0; }
-  .step-num { font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-  .step p { font-size: 15px; line-height: 1.6; color: var(--ink); }
-  .step a { color: var(--blue-mid); }
-  .step code { display: block; background: #1e1e1e; color: #d4d4d4; padding: 12px 14px; border-radius: 4px; font-size: 12px; line-height: 1.7; white-space: pre; overflow-x: auto; margin: 10px 0; font-family: 'Courier New', monospace; }
-  .copy-btn { font-size: 12px; padding: 4px 10px; background: var(--blue-church); color: white; border: none; border-radius: 3px; cursor: pointer; font-family: 'EB Garamond', serif; margin-bottom: 6px; }
-  .copy-btn:hover { background: var(--blue-mid); }
-  .url-input-wrap { display: flex; gap: 8px; margin-top: 10px; }
-  .url-input { flex: 1; font-family: 'EB Garamond', serif; font-size: 14px; padding: 8px 12px; border: 1px solid var(--gold-light); border-radius: 3px; background: white; color: var(--ink); outline: none; }
-  .url-input:focus { border-color: var(--blue-mid); }
-  .btn-connect { padding: 8px 20px; background: var(--blue-church); color: var(--gold-pale); border: none; border-radius: 3px; font-family: 'Playfair Display', serif; font-size: 14px; cursor: pointer; }
-  .btn-connect:hover { background: var(--blue-mid); }
-  .modal-close { float: right; background: none; border: none; font-size: 22px; cursor: pointer; color: #888; line-height: 1; margin-top: -8px; }
+  .modal { background: var(--parchment); border: 2px solid var(--gold); border-radius: 6px; width: 580px; max-width: 100%; padding: 24px; font-family: 'EB Garamond', serif; margin: auto; }
+  .modal h2 { font-family: 'Playfair Display', serif; color: var(--blue-church); font-size: 18px; margin-bottom: 18px; border-bottom: 1px solid var(--gold-light); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: #888; line-height: 1; }
   .modal-close:hover { color: var(--ink); }
+  .modal-section { margin-bottom: 18px; }
+  .modal-section-title { font-family: 'Playfair Display', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue-church); padding: 4px 0; border-bottom: 1px solid var(--gold-light); margin-bottom: 12px; }
+  .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .settings-grid.full { grid-template-columns: 1fr; }
+  .sfield { display: flex; flex-direction: column; gap: 3px; }
+  .sfield label { font-size: 10px; color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.5px; }
+  .sfield input { font-family: 'EB Garamond', serif; font-size: 14px; padding: 6px 10px; border: 1px solid #C9A84C88; border-radius: 3px; background: white; color: var(--ink); outline: none; }
+  .sfield input:focus { border-color: var(--blue-mid); }
+  .modal-btn-row { display: flex; gap: 8px; margin-top: 16px; }
+  .mbtn { flex: 1; padding: 9px; border: none; border-radius: 3px; font-family: 'EB Garamond', serif; font-size: 14px; cursor: pointer; }
+  .mbtn-primary { background: var(--blue-church); color: var(--gold-pale); font-weight: 600; }
+  .mbtn-primary:hover { background: var(--blue-mid); }
+  .mbtn-secondary { background: var(--parchment-dark); color: var(--ink-mid); border: 1px solid var(--gold-light); }
+  .mbtn-secondary:hover { background: #E5D9B8; }
+  .url-input-wrap { display: flex; gap: 8px; margin-top: 8px; }
+  .url-input { flex: 1; font-family: 'EB Garamond', serif; font-size: 14px; padding: 7px 10px; border: 1px solid var(--gold-light); border-radius: 3px; background: white; color: var(--ink); outline: none; }
 
-  /* APP LAYOUT */
-  .app-layout { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 64px); }
-
-  .left-panel { background: var(--parchment); border-right: 2px solid var(--gold); display: flex; flex-direction: column; overflow-y: auto; max-height: calc(100vh - 64px); }
-
+  /* APP */
+  .app-layout { display: grid; grid-template-columns: 380px 1fr; min-height: calc(100vh - 58px); }
+  .left-panel { background: var(--parchment); border-right: 2px solid var(--gold); display: flex; flex-direction: column; overflow-y: auto; max-height: calc(100vh - 58px); }
   .panel-tabs { display: flex; border-bottom: 2px solid var(--gold); }
-  .tab { flex: 1; padding: 11px 6px; text-align: center; font-family: 'EB Garamond', serif; font-size: 12px; cursor: pointer; border: none; background: var(--parchment-dark); color: var(--ink-mid); transition: all 0.2s; border-bottom: 3px solid transparent; }
+  .tab { flex: 1; padding: 10px 5px; text-align: center; font-family: 'EB Garamond', serif; font-size: 12px; cursor: pointer; border: none; background: var(--parchment-dark); color: var(--ink-mid); transition: all 0.2s; border-bottom: 3px solid transparent; }
   .tab.active { background: var(--parchment); color: var(--blue-church); border-bottom-color: var(--blue-church); font-weight: 600; }
 
-  .form-panel { padding: 16px; display: none; flex-direction: column; gap: 12px; }
+  .form-panel { padding: 14px; display: none; flex-direction: column; gap: 10px; }
   .form-panel.active { display: flex; }
-
   .field-group { display: flex; flex-direction: column; gap: 3px; }
-  .field-group label { font-size: 10.5px; color: var(--ink-mid); letter-spacing: 0.5px; text-transform: uppercase; }
+  .field-group label { font-size: 10px; color: var(--ink-mid); letter-spacing: 0.5px; text-transform: uppercase; }
   .field-group input { font-family: 'EB Garamond', serif; font-size: 15px; padding: 6px 10px; border: 1px solid #C9A84C88; border-radius: 3px; background: white; color: var(--ink); outline: none; transition: border 0.2s; }
   .field-group input:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 2px rgba(45,90,158,0.12); }
+  .field-group input.date-input { letter-spacing: 1px; }
+  .field-group input.date-input::placeholder { letter-spacing: 0; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue-church); padding: 5px 0 2px; border-bottom: 1px solid var(--gold-light); margin-top: 4px; }
-
-  .btn-row { display: flex; gap: 8px; margin-top: 6px; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue-church); padding: 4px 0 2px; border-bottom: 1px solid var(--gold-light); margin-top: 2px; }
+  .btn-row { display: flex; gap: 8px; margin-top: 4px; }
   .btn { flex: 1; padding: 9px; border: none; border-radius: 3px; font-family: 'EB Garamond', serif; font-size: 14px; cursor: pointer; transition: all 0.2s; }
   .btn-primary { background: var(--blue-church); color: var(--gold-pale); font-weight: 600; }
   .btn-primary:hover { background: var(--blue-mid); }
@@ -103,59 +80,51 @@
   .btn-secondary:hover { background: #E5D9B8; }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* DB PANEL */
-  .db-panel { padding: 14px; display: none; flex-direction: column; gap: 8px; }
+  /* DB */
+  .db-panel { padding: 12px; display: none; flex-direction: column; gap: 8px; }
   .db-panel.active { display: flex; }
-
-  .db-toolbar { display: flex; gap: 6px; align-items: center; }
-  .db-search { flex: 1; font-family: 'EB Garamond', serif; font-size: 15px; padding: 7px 12px; border: 1px solid var(--gold-light); border-radius: 3px; background: white; outline: none; }
-  .btn-refresh { padding: 7px 12px; background: var(--parchment-dark); border: 1px solid var(--gold-light); border-radius: 3px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
+  .db-toolbar { display: flex; gap: 6px; }
+  .db-search { flex: 1; font-family: 'EB Garamond', serif; font-size: 14px; padding: 6px 10px; border: 1px solid var(--gold-light); border-radius: 3px; background: white; outline: none; }
+  .btn-refresh { padding: 6px 10px; background: var(--parchment-dark); border: 1px solid var(--gold-light); border-radius: 3px; cursor: pointer; font-size: 14px; }
   .btn-refresh:hover { background: #E5D9B8; }
-  .btn-refresh.spinning { animation: spin 1s linear infinite; }
+  .btn-refresh.spinning { animation: spin 1s linear infinite; display: inline-block; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  .db-source-tabs { display: flex; gap: 6px; }
-  .source-tab { flex: 1; padding: 6px; text-align: center; font-family: 'EB Garamond', serif; font-size: 12px; cursor: pointer; border: 1px solid var(--gold-light); border-radius: 3px; background: var(--parchment-dark); color: var(--ink-mid); transition: all 0.2s; }
+  .db-source-tabs { display: flex; gap: 5px; }
+  .source-tab { flex: 1; padding: 5px; text-align: center; font-family: 'EB Garamond', serif; font-size: 11px; cursor: pointer; border: 1px solid var(--gold-light); border-radius: 3px; background: var(--parchment-dark); color: var(--ink-mid); transition: all 0.2s; }
   .source-tab.active { background: var(--blue-church); color: var(--gold-pale); border-color: var(--blue-church); }
-
   .db-count { font-size: 11px; color: #7A6030; text-align: right; }
-  .db-list { display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
-
-  .db-item { background: white; border: 1px solid #DDD0A8; border-radius: 3px; padding: 9px 12px; transition: all 0.15s; position: relative; }
+  .db-list { display: flex; flex-direction: column; gap: 5px; }
+  .db-item { background: white; border: 1px solid #DDD0A8; border-radius: 3px; padding: 8px 10px; transition: all 0.15s; position: relative; }
   .db-item:hover { border-color: var(--blue-mid); background: #F0F5FF; }
-  .db-item-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; }
-  .db-item-meta { font-size: 12px; color: #7A6030; margin-top: 2px; }
-  .db-item-sync { font-size: 11px; margin-top: 3px; }
-  .sync-ok { color: #2E7D32; }
-  .sync-no { color: #9E6000; }
+  .db-item-name { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; }
+  .db-item-meta { font-size: 11px; color: #7A6030; margin-top: 2px; }
+  .db-item-sync { font-size: 10px; margin-top: 2px; }
+  .sync-ok { color: #2E7D32; } .sync-no { color: #9E6000; }
   .source-sheets { border-left: 3px solid #0F9D58; }
   .source-local { border-left: 3px solid var(--gold-light); }
-
-  .db-item-actions { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s; }
+  .db-item-actions { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); display: flex; gap: 3px; opacity: 0; transition: opacity 0.15s; }
   .db-item:hover .db-item-actions { opacity: 1; }
-  .icon-btn { width: 28px; height: 28px; border: none; border-radius: 3px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .icon-btn { width: 26px; height: 26px; border: none; border-radius: 3px; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
   .icon-btn-edit { background: #E8EEF8; color: var(--blue-church); }
   .icon-btn-edit:hover { background: #D0DCEF; }
   .icon-btn-print { background: #E8F4E8; color: #1A5C1A; }
   .icon-btn-print:hover { background: #C8E8C8; }
   .icon-btn-del { background: #F8E8E8; color: var(--red-church); }
   .icon-btn-del:hover { background: #EED0D0; }
+  .empty-state { text-align: center; color: #A89060; padding: 28px 16px; font-style: italic; font-size: 13px; }
 
-  .empty-state { text-align: center; color: #A89060; padding: 32px 20px; font-style: italic; font-size: 14px; }
-  .loading-state { text-align: center; color: #7A6030; padding: 24px; font-size: 14px; }
-
-  /* RIGHT PANEL */
-  .right-panel { background: #1A2518; display: flex; align-items: flex-start; justify-content: center; padding: 28px 20px; overflow-y: auto; }
-  .preview-hint { color: #5A7A50; font-size: 12px; text-align: center; margin-bottom: 14px; font-style: italic; }
-  .preview-container { background: white; width: 180mm; min-height: 249mm; position: relative; box-shadow: 0 8px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,168,76,0.3); }
-  .print-page { width: 180mm; height: 249mm; position: relative; background: transparent; font-family: 'Times New Roman', Times, serif; overflow: hidden; }
-  .pf { position: absolute; white-space: nowrap; overflow: visible; font-family: 'Times New Roman', Times, serif; line-height: 1; }
+  /* PREVIEW */
+  .right-panel { background: #1A2518; display: flex; align-items: flex-start; justify-content: center; padding: 24px 16px; overflow-y: auto; }
+  .preview-hint { color: #5A7A50; font-size: 11px; text-align: center; margin-bottom: 12px; font-style: italic; }
+  .preview-container { background: white; width: 180mm; min-height: 249mm; box-shadow: 0 8px 60px rgba(0,0,0,0.6); }
+  .print-page { width: 180mm; height: 249mm; position: relative; background: transparent; overflow: hidden; }
+  .pf { position: absolute; white-space: nowrap; font-family: 'Times New Roman', Times, serif; line-height: 1; }
   .pf-name    { font-size: 13pt; font-weight: 700; color: #000; text-align: center; }
   .pf-regular { font-size: 11.5pt; color: #000; }
   .pf-bold    { font-size: 11.5pt; font-weight: 700; color: #000; }
   .pf-center  { text-align: center; }
 
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--blue-church); color: var(--gold-pale); padding: 9px 22px; border-radius: 4px; font-family: 'EB Garamond', serif; font-size: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: transform 0.3s; z-index: 1000; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--blue-church); color: var(--gold-pale); padding: 8px 20px; border-radius: 4px; font-family: 'EB Garamond', serif; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); transition: transform 0.3s; z-index: 3000; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
   @media print {
@@ -168,26 +137,42 @@
 </head>
 <body>
 
-<!-- SETUP MODAL -->
-<div class="modal-overlay" id="modal">
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="modal-settings">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <h2>⚙️ Подключение Google Sheets</h2>
-    <div class="step">
-      <div class="step-num">Шаг 1</div>
-      <p>Откройте вашу Google Таблицу → меню <strong>Расширения → Apps Script</strong>. Замените весь код на новый (скачайте его отдельно или скопируйте ниже).</p>
-      <button class="copy-btn" onclick="copyScript()">📋 Копировать код скрипта</button>
-    </div>
-    <div class="step">
-      <div class="step-num">Шаг 2</div>
-      <p>В Apps Script: <strong>Развернуть → Новое развёртывание</strong>. Тип: Веб-приложение. Доступ: <strong>Все</strong>. Нажмите «Развернуть», скопируйте URL.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">Шаг 3 — Вставьте URL</div>
-      <div class="url-input-wrap">
-        <input type="text" class="url-input" id="webapp-url" placeholder="https://script.google.com/macros/s/.../exec">
-        <button class="btn-connect" onclick="connectSheets()">Подключить</button>
+    <h2>⚙️ Настройки <button class="modal-close" onclick="closeSettings()">✕</button></h2>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Сведения о храме (подставляются автоматически)</div>
+      <div class="settings-grid">
+        <div class="sfield" style="grid-column:1/-1"><label>Название приложения (заголовок)</label><input id="s-app-title" placeholder="Свидетельства о Крещении"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Подзаголовок (храм, город)</label><input id="s-app-subtitle" placeholder="Храм Святителя Николая · пгт. Усть-Карск"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 1 в свидетельстве)</label><input id="s-hram1" placeholder="храме Святителя Николая Чудотворца"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 2)</label><input id="s-hram2" placeholder="пгт. Усть-Карск Сретенского района"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 3 — епархия)</label><input id="s-hram3" placeholder="Нерчинской епархии Забайкальской митрополии"></div>
       </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Священник (подставляется автоматически)</div>
+      <div class="settings-grid">
+        <div class="sfield"><label>Сан</label><input id="s-san" placeholder="иерей"></div>
+        <div class="sfield"><label>Имя Фамилия</label><input id="s-svyash" placeholder="Николай Корниенко"></div>
+      </div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">Google Sheets</div>
+      <p style="font-size:13px;color:var(--ink-mid);margin-bottom:6px;">URL веб-приложения из Google Apps Script:</p>
+      <div class="url-input-wrap">
+        <input type="text" class="url-input" id="s-webapp-url" placeholder="https://script.google.com/macros/s/.../exec">
+        <button class="mbtn mbtn-primary" style="flex:0;white-space:nowrap" onclick="testSheetsConnection()">Проверить</button>
+      </div>
+    </div>
+
+    <div class="modal-btn-row">
+      <button class="mbtn mbtn-secondary" onclick="closeSettings()">Отмена</button>
+      <button class="mbtn mbtn-primary" onclick="saveSettings()">💾 Сохранить настройки</button>
     </div>
   </div>
 </div>
@@ -196,16 +181,16 @@
   <div class="header-left">
     <span class="cross">✝</span>
     <div>
-      <h1>Свидетельства о совершении таинства Крещения</h1>
-      <p>Храм Святителя Николая Чудотворца · пгт. Усть-Карск</p>
+      <div id="app-title">Свидетельства о совершении таинства Крещения</div>
+      <div id="app-subtitle"></div>
     </div>
   </div>
   <div class="header-right">
     <div class="sheets-status">
       <span class="sheets-dot" id="sheets-dot"></span>
-      <span id="sheets-status-text">Google Sheets не подключён</span>
+      <span id="sheets-status-text">Sheets</span>
     </div>
-    <button class="btn-setup" onclick="openModal()" id="btn-setup-header">⚙️ Настроить</button>
+    <button class="hbtn" onclick="openSettings()">⚙️ Настройки</button>
   </div>
 </header>
 
@@ -216,37 +201,36 @@
       <button class="tab" onclick="switchTab('db')">📋 База данных</button>
     </div>
 
-    <!-- FORM -->
     <div class="form-panel active" id="tab-form">
       <input type="hidden" id="edit-id">
 
       <div class="section-title">Личные данные</div>
-      <div class="field-group"><label>Имя (гражданское)</label><input type="text" id="f-imya" placeholder="Татьяна" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Отчество</label><input type="text" id="f-otchestvo" placeholder="Евгеньевна" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Фамилия</label><input type="text" id="f-familia" placeholder="Вологдина" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Имя (гражданское)</label><input type="text" id="f-imya" placeholder="Имя" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Отчество</label><input type="text" id="f-otchestvo" placeholder="Отчество" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Фамилия</label><input type="text" id="f-familia" placeholder="Фамилия" oninput="updatePreview()"></div>
       <div class="field-row">
-        <div class="field-group"><label>Дата рождения</label><input type="text" id="f-date-born" placeholder="28.02.1995 г." oninput="updatePreview()"></div>
-        <div class="field-group"><label>Дата крещения</label><input type="text" id="f-date-krest" placeholder="23.05.2026 г." oninput="updatePreview()"></div>
+        <div class="field-group"><label>Дата рождения</label><input type="text" id="f-date-born" class="date-input" placeholder="ДД.ММ.ГГГГ" maxlength="13" oninput="handleDateInput(this)" onkeydown="handleDateKey(event,this)"></div>
+        <div class="field-group"><label>Дата крещения</label><input type="text" id="f-date-krest" class="date-input" placeholder="ДД.ММ.ГГГГ" maxlength="13" oninput="handleDateInput(this)" onkeydown="handleDateKey(event,this)"></div>
       </div>
 
       <div class="section-title">Место крещения</div>
-      <div class="field-group"><label>Храм (строка 1)</label><input type="text" id="f-hram1" value="храме Святителя Николая Чудотворца" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Храм (строка 2)</label><input type="text" id="f-hram2" value="пгт. Усть-Карск Сретенского района" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Храм (строка 3)</label><input type="text" id="f-hram3" value="Нерчинской епархии Забайкальской митрополии" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Храм (строка 1)</label><input type="text" id="f-hram1" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Храм (строка 2)</label><input type="text" id="f-hram2" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Храм (строка 3)</label><input type="text" id="f-hram3" oninput="updatePreview()"></div>
 
       <div class="section-title">Крестильное имя</div>
-      <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Татиана" oninput="updatePreview()"></div>
-      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="святой мученицы Татианы" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Память (дата)</label><input type="text" id="f-pamyat" placeholder="25 января (н.ст.)" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Имя по святцам" oninput="updatePreview()"></div>
+      <div class="field-group"><label>В честь</label><input type="text" id="f-v-chest" placeholder="В честь кого наречён(а)" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Память (дата)</label><input type="text" id="f-pamyat" placeholder="Дата памяти" oninput="updatePreview()"></div>
 
       <div class="section-title">Восприемники и запись</div>
-      <div class="field-group"><label>Восприемник 1 (крёстный отец)</label><input type="text" id="f-vosp1" placeholder="Сергей Иванович Иванов" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Восприемница 2 (крёстная мать)</label><input type="text" id="f-vosp2" placeholder="Инесса Олеговна Ильина" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Восприемник 1 (крёстный отец)</label><input type="text" id="f-vosp1" placeholder="Фамилия Имя Отчество" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Восприемница 2 (крёстная мать)</label><input type="text" id="f-vosp2" placeholder="Фамилия Имя Отчество" oninput="updatePreview()"></div>
       <div class="field-row">
-        <div class="field-group"><label>Номер записи</label><input type="text" id="f-nomer" placeholder="01/23.05.26" oninput="updatePreview()"></div>
-        <div class="field-group"><label>Священник (сан)</label><input type="text" id="f-san" value="иерей" oninput="updatePreview()"></div>
+        <div class="field-group"><label>Номер записи</label><input type="text" id="f-nomer" placeholder="01/2026" oninput="updatePreview()"></div>
+        <div class="field-group"><label>Сан священника</label><input type="text" id="f-san" oninput="updatePreview()"></div>
       </div>
-      <div class="field-group"><label>Фамилия священника</label><input type="text" id="f-svyash" value="Николай Корниенко" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Имя Фамилия священника</label><input type="text" id="f-svyash" oninput="updatePreview()"></div>
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="clearForm()">Очистить</button>
@@ -255,15 +239,14 @@
       </div>
     </div>
 
-    <!-- DATABASE -->
     <div class="db-panel" id="tab-db">
       <div class="db-toolbar">
         <input type="text" class="db-search" id="db-search" placeholder="🔍 Поиск..." oninput="renderDB()">
-        <button class="btn-refresh" id="btn-refresh" onclick="loadFromSheets()" title="Обновить из Google Sheets">🔄</button>
+        <button class="btn-refresh" id="btn-refresh" onclick="loadFromSheets()" title="Обновить из Sheets">🔄</button>
       </div>
       <div class="db-source-tabs">
-        <button class="source-tab active" id="stab-all" onclick="setSource('all')">Все записи</button>
-        <button class="source-tab" id="stab-sheets" onclick="setSource('sheets')">☁️ Из таблицы</button>
+        <button class="source-tab active" id="stab-all" onclick="setSource('all')">Все</button>
+        <button class="source-tab" id="stab-sheets" onclick="setSource('sheets')">☁️ Таблица</button>
         <button class="source-tab" id="stab-local" onclick="setSource('local')">💻 Локальные</button>
       </div>
       <div class="db-count" id="db-count"></div>
@@ -271,10 +254,9 @@
     </div>
   </div>
 
-  <!-- PREVIEW -->
   <div class="right-panel">
     <div>
-      <p class="preview-hint">Предварительный просмотр — текст который будет напечатан поверх бланка</p>
+      <p class="preview-hint">Предварительный просмотр — текст поверх бланка</p>
       <div class="preview-container">
         <div class="print-page" id="print-page"></div>
       </div>
@@ -285,17 +267,98 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const STORE_KEY = 'krest_db_v2';
-const WEBAPP_KEY = 'krest_webapp_url';
+// ── KEYS ──
+const STORE_KEY   = 'krest_db_v2';
+const SETTINGS_KEY = 'krest_settings_v1';
+const WEBAPP_KEY  = 'krest_webapp_url';
 
 let sheetsRows = [];
 let currentSource = 'all';
 
-function loadDB() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '[]'); } catch(e) { return []; } }
-function saveDB(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
-function getWebAppUrl() { return localStorage.getItem(WEBAPP_KEY) || ''; }
-function setWebAppUrl(url) { localStorage.setItem(WEBAPP_KEY, url); }
+// ── SETTINGS ──
+function defaultSettings() {
+  return { appTitle:'Свидетельства о совершении таинства Крещения', appSubtitle:'', hram1:'', hram2:'', hram3:'', san:'', svyash:'' };
+}
+function loadSettings() { try { return { ...defaultSettings(), ...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}') }; } catch(e) { return defaultSettings(); } }
+function saveSettings() {
+  const s = {
+    appTitle:  document.getElementById('s-app-title').value.trim() || defaultSettings().appTitle,
+    appSubtitle: document.getElementById('s-app-subtitle').value.trim(),
+    hram1: document.getElementById('s-hram1').value.trim(),
+    hram2: document.getElementById('s-hram2').value.trim(),
+    hram3: document.getElementById('s-hram3').value.trim(),
+    san:   document.getElementById('s-san').value.trim(),
+    svyash: document.getElementById('s-svyash').value.trim(),
+  };
+  const url = document.getElementById('s-webapp-url').value.trim();
+  if (url) localStorage.setItem(WEBAPP_KEY, url);
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  applySettings(s);
+  closeSettings();
+  toast('Настройки сохранены ✓');
+  if (url) initSheetsStatus();
+}
 
+function applySettings(s) {
+  document.getElementById('app-title').textContent = s.appTitle || defaultSettings().appTitle;
+  document.getElementById('app-subtitle').textContent = s.appSubtitle || '';
+  // Pre-fill form fields from settings
+  const f1 = document.getElementById('f-hram1');
+  const f2 = document.getElementById('f-hram2');
+  const f3 = document.getElementById('f-hram3');
+  const fsan = document.getElementById('f-san');
+  const fsvyash = document.getElementById('f-svyash');
+  if (!f1.value) f1.value = s.hram1;
+  if (!f2.value) f2.value = s.hram2;
+  if (!f3.value) f3.value = s.hram3;
+  if (!fsan.value) fsan.value = s.san;
+  if (!fsvyash.value) fsvyash.value = s.svyash;
+  updatePreview();
+}
+
+function openSettings() {
+  const s = loadSettings();
+  document.getElementById('s-app-title').value = s.appTitle;
+  document.getElementById('s-app-subtitle').value = s.appSubtitle;
+  document.getElementById('s-hram1').value = s.hram1;
+  document.getElementById('s-hram2').value = s.hram2;
+  document.getElementById('s-hram3').value = s.hram3;
+  document.getElementById('s-san').value = s.san;
+  document.getElementById('s-svyash').value = s.svyash;
+  const url = localStorage.getItem(WEBAPP_KEY) || '';
+  document.getElementById('s-webapp-url').value = url;
+  document.getElementById('modal-settings').classList.add('open');
+}
+function closeSettings() { document.getElementById('modal-settings').classList.remove('open'); }
+
+// ── DATE INPUT ──
+// Auto-format: ДД.ММ.ГГГГ г.
+function handleDateInput(el) {
+  let raw = el.value.replace(/\D/g,'');
+  let out = '';
+  if (raw.length > 0) out = raw.substring(0,2);
+  if (raw.length > 2) out += '.' + raw.substring(2,4);
+  if (raw.length > 4) out += '.' + raw.substring(4,8);
+  // add " г." suffix when full date entered
+  if (raw.length >= 8) out += ' г.';
+  el.value = out;
+  updatePreview();
+}
+
+function handleDateKey(e, el) {
+  // Allow backspace to strip suffix gracefully
+  if (e.key === 'Backspace') {
+    const v = el.value;
+    if (v.endsWith(' г.')) { e.preventDefault(); el.value = v.slice(0,-3); updatePreview(); }
+  }
+}
+
+// ── LOCAL DB ──
+function loadDB() { try { return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); } catch(e) { return []; } }
+function saveDB(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+function getWebAppUrl() { return localStorage.getItem(WEBAPP_KEY)||''; }
+
+// ── FORM ──
 function v(id) { return document.getElementById(id).value.trim(); }
 
 function getFormData() {
@@ -307,26 +370,24 @@ function getFormData() {
     imyaSvyat: v('f-imya-svyat'), vChest: v('f-v-chest'), pamyat: v('f-pamyat'),
     vosp1: v('f-vosp1'), vosp2: v('f-vosp2'),
     nomer: v('f-nomer'), san: v('f-san'), svyash: v('f-svyash'),
-    savedAt: new Date().toLocaleDateString('ru-RU'),
-    syncedToSheets: false
+    savedAt: new Date().toLocaleDateString('ru-RU'), syncedToSheets: false
   };
 }
 
 function setFormData(rec) {
   document.getElementById('edit-id').value = rec.id || '';
-  const s = (id, val) => document.getElementById(id).value = val || '';
+  const s = (id, val) => { if (val !== undefined) document.getElementById(id).value = val || ''; };
   s('f-imya', rec.imya || rec['Имя']); s('f-otchestvo', rec.otchestvo || rec['Отчество']); s('f-familia', rec.familia || rec['Фамилия']);
   s('f-date-born', rec.dateBorn || rec['Дата рождения']); s('f-date-krest', rec.dateKrest || rec['Дата крещения']);
-  s('f-hram1', rec.hram1 || 'храме Святителя Николая Чудотворца');
-  s('f-hram2', rec.hram2 || 'пгт. Усть-Карск Сретенского района');
-  s('f-hram3', rec.hram3 || 'Нерчинской епархии Забайкальской митрополии');
+  const st = loadSettings();
+  s('f-hram1', rec.hram1 || st.hram1); s('f-hram2', rec.hram2 || st.hram2); s('f-hram3', rec.hram3 || st.hram3);
   s('f-imya-svyat', rec.imyaSvyat || rec['Имя по святцам']); s('f-v-chest', rec.vChest || rec['В честь']); s('f-pamyat', rec.pamyat || rec['Память']);
   s('f-vosp1', rec.vosp1 || rec['Восприемник 1']); s('f-vosp2', rec.vosp2 || rec['Восприемница 2']);
-  s('f-nomer', rec.nomer || rec['Номер']); s('f-san', rec.san || rec['Сан'] || 'иерей'); s('f-svyash', rec.svyash || rec['Священник']);
+  s('f-nomer', rec.nomer || rec['Номер']); s('f-san', rec.san || rec['Сан'] || st.san); s('f-svyash', rec.svyash || rec['Священник'] || st.svyash);
   updatePreview();
 }
 
-// PREVIEW
+// ── PREVIEW ──
 const LAYOUT = (d) => [
   { x:30,  y:46,   w:120, cls:'pf-name pf-center', text: d.imya },
   { x:30,  y:56,   w:120, cls:'pf-name pf-center', text: d.otchestvo },
@@ -354,300 +415,169 @@ function updatePreview() {
     if (!f.text) return;
     const el = document.createElement('div');
     el.className = 'pf ' + f.cls;
-    el.style.left = f.x + 'mm';
-    el.style.top = f.y + 'mm';
-    el.style.width = f.w + 'mm';
+    el.style.left = f.x + 'mm'; el.style.top = f.y + 'mm'; el.style.width = f.w + 'mm';
     el.textContent = f.text;
     page.appendChild(el);
   });
 }
 
-// LOAD FROM SHEETS
+// ── SHEETS ──
 async function loadFromSheets() {
   const url = getWebAppUrl();
-  if (!url) { toast('Сначала подключите Google Sheets'); return; }
-
+  if (!url) { toast('Сначала укажите URL в ⚙️ Настройках'); return; }
   const btn = document.getElementById('btn-refresh');
   btn.classList.add('spinning');
-  setStatus('syncing', 'Загружаю из таблицы...');
-
+  setStatus('syncing', 'Загружаю...');
   try {
     const resp = await fetch(url + '?action=getAll');
     const data = await resp.json();
     if (data.ok) {
       sheetsRows = data.rows || [];
-      setStatus('connected', `Загружено ${sheetsRows.length} записей`);
-      renderDB();
-      toast(`Загружено из Google Sheets: ${sheetsRows.length} записей`);
-    } else {
-      setStatus('error', 'Ошибка загрузки');
-      toast('Ошибка: ' + (data.error || 'неизвестная'));
-    }
-  } catch(e) {
-    setStatus('error', 'Нет связи');
-    toast('Не удалось подключиться к Google Sheets');
-  }
+      setStatus('connected', `${sheetsRows.length} записей`);
+      renderDB(); toast(`Загружено: ${sheetsRows.length} записей`);
+    } else { setStatus('error', 'Ошибка'); toast('Ошибка: ' + (data.error||'неизвестная')); }
+  } catch(e) { setStatus('error', 'Нет связи'); toast('Нет связи с Google Sheets'); }
   btn.classList.remove('spinning');
 }
 
-// SAVE
+async function testSheetsConnection() {
+  const url = document.getElementById('s-webapp-url').value.trim();
+  if (!url) { toast('Введите URL'); return; }
+  try {
+    const r = await fetch(url + '?action=ping');
+    const d = await r.json();
+    toast(d.ok ? 'Подключение успешно ✓' : 'Ошибка скрипта');
+  } catch(e) { toast('Не удалось подключиться'); }
+}
+
+// ── SAVE ──
 async function saveRecord() {
   const d = getFormData();
-  if (!d.imya && !d.familia) { toast('Введите хотя бы имя или фамилию'); return; }
-
+  if (!d.imya && !d.familia) { toast('Введите имя или фамилию'); return; }
   const btn = document.getElementById('btn-save');
-  btn.disabled = true; btn.textContent = '⏳ Сохраняю...';
-
-  let db = loadDB();
-  const idx = db.findIndex(r => r.id === d.id);
-  const isEdit = idx >= 0;
-
-  if (isEdit) { d.syncedToSheets = db[idx].syncedToSheets; db[idx] = d; }
-  else { db.unshift(d); }
+  btn.disabled = true; btn.textContent = '⏳...';
+  let db = loadDB(); const idx = db.findIndex(r => r.id === d.id); const isEdit = idx >= 0;
+  if (isEdit) { d.syncedToSheets = db[idx].syncedToSheets; db[idx] = d; } else { db.unshift(d); }
   saveDB(db);
-
   if (!isEdit) {
-    const webUrl = getWebAppUrl();
-    if (webUrl) {
-      setStatus('syncing', 'Отправка в таблицу...');
+    const url = getWebAppUrl();
+    if (url) {
+      setStatus('syncing', 'Синхронизирую...');
       try {
-        const resp = await fetch(webUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(d) });
-        const result = await resp.json();
-        if (result.ok) {
+        const r = await fetch(url, { method:'POST', headers:{'Content-Type':'text/plain'}, body: JSON.stringify(d) });
+        const res = await r.json();
+        if (res.ok) {
           db = loadDB(); const i2 = db.findIndex(r => r.id === d.id);
           if (i2 >= 0) { db[i2].syncedToSheets = true; saveDB(db); }
-          setStatus('connected', 'Синхронизировано ✓');
+          setStatus('connected', 'Синхронизировано');
           toast('Сохранено и добавлено в Google Sheets ✓');
           await loadFromSheets();
-        } else { setStatus('error', 'Ошибка синхронизации'); toast('Сохранено локально. Ошибка Sheets.'); }
-      } catch(e) { setStatus('error', 'Нет связи'); toast('Сохранено локально. Нет связи с Sheets.'); }
+        } else { setStatus('error','Ошибка'); toast('Локально сохранено. Ошибка Sheets.'); }
+      } catch(e) { setStatus('error','Нет связи'); toast('Локально сохранено. Нет связи.'); }
     } else { toast('Сохранено локально ✓'); }
   } else { toast('Запись обновлена ✓'); }
-
   btn.disabled = false; btn.textContent = '💾 Сохранить';
   document.getElementById('edit-id').value = '';
   renderDB();
 }
 
-// SOURCE TABS
+// ── DB ──
 function setSource(src) {
   currentSource = src;
-  ['all','sheets','local'].forEach(s => {
-    document.getElementById('stab-'+s).classList.toggle('active', s === src);
-  });
+  ['all','sheets','local'].forEach(s => document.getElementById('stab-'+s).classList.toggle('active', s===src));
   renderDB();
 }
 
-// RENDER DB
 function renderDB() {
   const localDB = loadDB();
-  const q = (document.getElementById('db-search').value || '').toLowerCase();
-
+  const q = (document.getElementById('db-search').value||'').toLowerCase();
   let items = [];
-
-  if (currentSource === 'local' || currentSource === 'all') {
-    localDB.forEach(r => {
-      items.push({ ...r, _source: 'local' });
+  if (currentSource !== 'sheets') localDB.forEach(r => items.push({...r, _source:'local'}));
+  if (currentSource !== 'local') {
+    sheetsRows.forEach((r,i) => {
+      const nomer = r['Номер']||''; const dateK = r['Дата крещения']||'';
+      if (currentSource === 'all') { if (localDB.find(l => l.nomer===nomer && l.dateKrest===dateK && nomer)) return; }
+      items.push({ id:'sheets_'+i, imya:r['Имя'], otchestvo:r['Отчество'], familia:r['Фамилия'], dateBorn:r['Дата рождения'], dateKrest:r['Дата крещения'], imyaSvyat:r['Имя по святцам'], nomer:r['Номер'], vosp1:r['Восприемник 1'], vosp2:r['Восприемница 2'], vChest:r['В честь'], pamyat:r['Память'], svyash:r['Священник'], san:r['Сан'], savedAt:r['Дата записи'], _source:'sheets', _raw:r });
     });
   }
-
-  if (currentSource === 'sheets' || currentSource === 'all') {
-    sheetsRows.forEach((r, i) => {
-      // avoid duplicates with local (match by nomer+dateKrest)
-      const nomer = r['Номер'] || '';
-      const dateK = r['Дата крещения'] || '';
-      if (currentSource === 'all') {
-        const alreadyLocal = localDB.find(l => l.nomer === nomer && l.dateKrest === dateK && nomer);
-        if (alreadyLocal) return;
-      }
-      items.push({
-        id: 'sheets_' + i,
-        imya: r['Имя'], otchestvo: r['Отчество'], familia: r['Фамилия'],
-        dateBorn: r['Дата рождения'], dateKrest: r['Дата крещения'],
-        imyaSvyat: r['Имя по святцам'], nomer: r['Номер'],
-        vosp1: r['Восприемник 1'], vosp2: r['Восприемница 2'],
-        vChest: r['В честь'], pamyat: r['Память'],
-        svyash: r['Священник'], san: r['Сан'],
-        savedAt: r['Дата записи'],
-        _source: 'sheets', _raw: r
-      });
-    });
-  }
-
-  // Sort by date descending
-  items.sort((a, b) => {
-    const da = a.dateKrest || a['Дата крещения'] || '';
-    const db2 = b.dateKrest || b['Дата крещения'] || '';
-    return db2.localeCompare(da);
-  });
-
-  // Filter
-  const filtered = q ? items.filter(r =>
-    ((r.imya||'')+(r.otchestvo||'')+(r.familia||'')+(r.dateBorn||'')+(r.dateKrest||'')+(r.imyaSvyat||'')).toLowerCase().includes(q)
-  ) : items;
-
+  items.sort((a,b) => (b.dateKrest||'').localeCompare(a.dateKrest||''));
+  const filtered = q ? items.filter(r => ((r.imya||'')+(r.otchestvo||'')+(r.familia||'')+(r.dateKrest||'')+(r.imyaSvyat||'')).toLowerCase().includes(q)) : items;
   document.getElementById('db-count').textContent = `Записей: ${filtered.length}`;
-
   const list = document.getElementById('db-list');
-  if (filtered.length === 0) {
-    list.innerHTML = currentSource === 'sheets' && !getWebAppUrl()
-      ? '<div class="empty-state">Подключите Google Sheets и нажмите 🔄</div>'
-      : '<div class="empty-state">Записей пока нет</div>';
-    return;
-  }
-
+  if (!filtered.length) { list.innerHTML = '<div class="empty-state">Записей нет</div>'; return; }
   list.innerHTML = filtered.map(r => {
-    const isSheets = r._source === 'sheets';
-    const isLocal = r._source === 'local';
-    return `
-    <div class="db-item ${isSheets ? 'source-sheets' : 'source-local'}">
+    const isS = r._source==='sheets';
+    return `<div class="db-item ${isS?'source-sheets':'source-local'}">
       <div class="db-item-name">${r.imya||''} ${r.otchestvo||''} ${r.familia||''}</div>
-      <div class="db-item-meta">
-        Рождён: ${r.dateBorn||'—'} · Крещён: ${r.dateKrest||'—'}
-        ${r.imyaSvyat ? ' · '+r.imyaSvyat : ''}
-        ${r.nomer ? ' · №\u00a0'+r.nomer : ''}
-      </div>
-      <div class="db-item-sync ${isSheets ? 'sync-ok' : (r.syncedToSheets ? 'sync-ok' : 'sync-no')}">
-        ${isSheets ? '☁️ Google Sheets' : (r.syncedToSheets ? '☁️ В Google Sheets' : '⚠️ Только локально')}
-      </div>
+      <div class="db-item-meta">Рождён: ${r.dateBorn||'—'} · Крещён: ${r.dateKrest||'—'}${r.imyaSvyat?' · '+r.imyaSvyat:''}${r.nomer?' · №\u00a0'+r.nomer:''}</div>
+      <div class="db-item-sync ${isS?'sync-ok':(r.syncedToSheets?'sync-ok':'sync-no')}">${isS?'☁️ Google Sheets':(r.syncedToSheets?'☁️ В Sheets':'⚠️ Только локально')}</div>
       <div class="db-item-actions">
-        <button class="icon-btn icon-btn-edit" onclick='loadRecordToForm(${JSON.stringify(r).replace(/'/g,"&#39;")})' title="Загрузить в форму">✏️</button>
-        <button class="icon-btn icon-btn-print" onclick='printFromRecord(${JSON.stringify(r).replace(/'/g,"&#39;")})' title="Печать">🖨️</button>
-        ${isLocal ? `<button class="icon-btn icon-btn-del" onclick="deleteRecord('${r.id}')" title="Удалить">🗑️</button>` : ''}
+        <button class="icon-btn icon-btn-edit" onclick='loadRec(${JSON.stringify(r).replace(/'/g,"&#39;")})' title="В форму">✏️</button>
+        <button class="icon-btn icon-btn-print" onclick='printRec(${JSON.stringify(r).replace(/'/g,"&#39;")})' title="Печать">🖨️</button>
+        ${!isS?`<button class="icon-btn icon-btn-del" onclick="delRec('${r.id}')" title="Удалить">🗑️</button>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-function loadRecordToForm(rec) {
-  setFormData(rec);
-  switchTab('form');
-}
-
-function printFromRecord(rec) {
-  setFormData(rec);
-  setTimeout(() => window.print(), 150);
-}
-
-function editRecord(id) {
-  const rec = loadDB().find(r => r.id === id);
-  if (rec) { setFormData(rec); switchTab('form'); }
-}
-
-function deleteRecord(id) {
-  if (!confirm('Удалить локальную запись?')) return;
-  saveDB(loadDB().filter(r => r.id !== id));
-  renderDB();
-  toast('Запись удалена');
-}
+function loadRec(r) { setFormData(r); switchTab('form'); }
+function printRec(r) { setFormData(r); setTimeout(()=>window.print(),150); }
+function delRec(id) { if (!confirm('Удалить локальную запись?')) return; saveDB(loadDB().filter(r=>r.id!==id)); renderDB(); toast('Удалено'); }
 
 function clearForm() {
   document.getElementById('edit-id').value = '';
   ['f-imya','f-otchestvo','f-familia','f-date-born','f-date-krest','f-imya-svyat','f-v-chest','f-pamyat','f-vosp1','f-vosp2','f-nomer'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-hram1').value = 'храме Святителя Николая Чудотворца';
-  document.getElementById('f-hram2').value = 'пгт. Усть-Карск Сретенского района';
-  document.getElementById('f-hram3').value = 'Нерчинской епархии Забайкальской митрополии';
-  document.getElementById('f-san').value = 'иерей';
-  document.getElementById('f-svyash').value = 'Николай Корниенко';
+  const s = loadSettings();
+  document.getElementById('f-hram1').value = s.hram1;
+  document.getElementById('f-hram2').value = s.hram2;
+  document.getElementById('f-hram3').value = s.hram3;
+  document.getElementById('f-san').value = s.san;
+  document.getElementById('f-svyash').value = s.svyash;
   updatePreview();
 }
 
-// MODAL
-function openModal() { document.getElementById('modal').classList.add('open'); const s = getWebAppUrl(); if (s) document.getElementById('webapp-url').value = s; }
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-async function connectSheets() {
-  const url = document.getElementById('webapp-url').value.trim();
-  if (!url.includes('script.google.com')) { toast('Вставьте корректный URL от Google Apps Script'); return; }
-  toast('Проверяю подключение...');
-  try {
-    const resp = await fetch(url + '?action=ping');
-    const data = await resp.json();
-    if (data.ok) {
-      setWebAppUrl(url);
-      setStatus('connected', 'Google Sheets подключён ✓');
-      document.getElementById('btn-setup-header').textContent = '✓ Настроено';
-      closeModal();
-      toast('Подключено! Загружаю записи...');
-      await loadFromSheets();
-    } else { toast('Скрипт ответил с ошибкой.'); }
-  } catch(e) { toast('Не удалось подключиться. Проверьте URL.'); }
-}
-
-function copyScript() {
-  const code = `const SHEET_NAME = 'Крещения';
-
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = ss.getSheetByName(SHEET_NAME);
-    if (!sheet) {
-      sheet = ss.insertSheet(SHEET_NAME);
-      sheet.appendRow(['Дата записи','Номер','Фамилия','Имя','Отчество','Дата рождения','Дата крещения','Имя по святцам','В честь','Память','Восприемник 1','Восприемница 2','Священник','Сан']);
-      sheet.getRange(1,1,1,14).setFontWeight('bold');
-      sheet.setFrozenRows(1);
-    }
-    sheet.appendRow([data.savedAt,data.nomer,data.familia,data.imya,data.otchestvo,data.dateBorn,data.dateKrest,data.imyaSvyat,data.vChest,data.pamyat,data.vosp1,data.vosp2,data.svyash,data.san]);
-    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  try {
-    const action = e.parameter.action || 'ping';
-    if (action === 'ping') return ContentService.createTextOutput(JSON.stringify({ok:true,status:'ready'})).setMimeType(ContentService.MimeType.JSON);
-    if (action === 'getAll') {
-      const ss = SpreadsheetApp.getActiveSpreadsheet();
-      const sheet = ss.getSheetByName(SHEET_NAME);
-      if (!sheet) return ContentService.createTextOutput(JSON.stringify({ok:true,rows:[]})).setMimeType(ContentService.MimeType.JSON);
-      const data = sheet.getDataRange().getValues();
-      const headers = data[0];
-      const rows = data.slice(1).map(row => { const obj = {}; headers.forEach((h,i) => obj[h] = row[i]||''); return obj; });
-      return ContentService.createTextOutput(JSON.stringify({ok:true,rows:rows})).setMimeType(ContentService.MimeType.JSON);
-    }
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({ok:false,error:err.message})).setMimeType(ContentService.MimeType.JSON);
-  }
-}`;
-  navigator.clipboard.writeText(code).then(() => toast('Код скопирован ✓'));
-}
-
-// STATUS
+// ── STATUS ──
 function setStatus(state, text) {
   document.getElementById('sheets-dot').className = 'sheets-dot ' + state;
   document.getElementById('sheets-status-text').textContent = text;
 }
-
-function initStatus() {
-  if (getWebAppUrl()) {
-    setStatus('connected', 'Google Sheets подключён');
-    document.getElementById('btn-setup-header').textContent = '✓ Настроено';
-    loadFromSheets();
-  }
+function initSheetsStatus() {
+  if (getWebAppUrl()) { setStatus('connected','Sheets'); loadFromSheets(); }
+  else setStatus('', 'Sheets');
 }
 
-// TABS
+// ── TABS ──
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active',(i===0&&name==='form')||(i===1&&name==='db')));
-  document.getElementById('tab-form').classList.toggle('active', name==='form');
-  document.getElementById('tab-db').classList.toggle('active', name==='db');
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&name==='form')||(i===1&&name==='db')));
+  document.getElementById('tab-form').classList.toggle('active',name==='form');
+  document.getElementById('tab-db').classList.toggle('active',name==='db');
   if (name==='db') renderDB();
 }
 
-// PRINT
+// ── PRINT ──
 function printCurrent() { window.print(); }
-function printRecord(id) { const rec = loadDB().find(r => r.id === id); if (rec) { setFormData(rec); setTimeout(() => window.print(), 150); } }
 
-// TOAST
-function toast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 3000); }
+// ── TOAST ──
+function toast(msg) { const el=document.getElementById('toast'); el.textContent=msg; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),3000); }
 
-// INIT
-updatePreview();
-renderDB();
-initStatus();
+// ── INIT ──
+(function init() {
+  const s = loadSettings();
+  document.getElementById('app-title').textContent = s.appTitle || defaultSettings().appTitle;
+  document.getElementById('app-subtitle').textContent = s.appSubtitle || '';
+  document.getElementById('f-hram1').value = s.hram1;
+  document.getElementById('f-hram2').value = s.hram2;
+  document.getElementById('f-hram3').value = s.hram3;
+  document.getElementById('f-san').value = s.san;
+  document.getElementById('f-svyash').value = s.svyash;
+  updatePreview();
+  renderDB();
+  initSheetsStatus();
+  // First launch hint
+  if (!s.hram1 && !s.appSubtitle) {
+    setTimeout(() => toast('👋 Откройте ⚙️ Настройки чтобы указать данные вашего храма'), 800);
+  }
+})();
 </script>
 </body>
 </html>
