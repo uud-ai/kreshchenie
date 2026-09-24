@@ -184,6 +184,14 @@
     </div>
 
     <div class="modal-section">
+      <div class="modal-section-title">Настоятель храма (подставляется автоматически)</div>
+      <div class="settings-grid">
+        <div class="sfield"><label>Сан</label><input id="s-san2" placeholder="сан (протоиерей, игумен...)"></div>
+        <div class="sfield"><label>Имя Фамилия</label><input id="s-svyash2" placeholder="Имя Фамилия"></div>
+      </div>
+    </div>
+
+    <div class="modal-section">
       <div class="modal-section-title">Google Sheets</div>
       <div id="sheets-setup-status"></div>
       <div id="sheets-connected-block" style="display:none">
@@ -312,11 +320,13 @@
       <div class="section-title">Восприемники и запись</div>
       <div class="field-group"><label>Восприемник 1 (крёстный отец)</label><input type="text" id="f-vosp1" placeholder="Фамилия Имя Отчество" oninput="updatePreview()"></div>
       <div class="field-group"><label>Восприемница 2 (крёстная мать)</label><input type="text" id="f-vosp2" placeholder="Фамилия Имя Отчество" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Номер записи</label><input type="text" id="f-nomer" placeholder="01/2026" oninput="updatePreview()"></div>
       <div class="field-row">
-        <div class="field-group"><label>Номер записи</label><input type="text" id="f-nomer" placeholder="01/2026" oninput="updatePreview()"></div>
-        <div class="field-group"><label>Сан священника</label><input type="text" id="f-san" oninput="updatePreview()"></div>
+        <div class="field-group"><label>Сан (таинство совершил)</label><input type="text" id="f-san" oninput="updatePreview()"></div>
+        <div class="field-group"><label>Сан настоятеля храма</label><input type="text" id="f-san2" oninput="updatePreview()"></div>
       </div>
-      <div class="field-group"><label>Имя Фамилия священника</label><input type="text" id="f-svyash" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Имя Фамилия священника (таинство совершил)</label><input type="text" id="f-svyash" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Имя Фамилия настоятеля храма</label><input type="text" id="f-svyash2" oninput="updatePreview()"></div>
 
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="clearForm()">Очистить</button>
@@ -363,7 +373,7 @@ let currentSource = 'all';
 
 // ── SETTINGS ──
 function defaultSettings() {
-  return { appTitle:'Свидетельства о совершении таинства Крещения', appSubtitle:'', hram1:'', hram2:'', hram3:'', hramLocked:false, san:'', svyash:'' };
+  return { appTitle:'Свидетельства о совершении таинства Крещения', appSubtitle:'', hram1:'', hram2:'', hram3:'', hramLocked:false, san:'', svyash:'', san2:'', svyash2:'' };
 }
 function loadSettings() { try { return { ...defaultSettings(), ...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}') }; } catch(e) { return defaultSettings(); } }
 function saveSettings() {
@@ -376,6 +386,8 @@ function saveSettings() {
     hram3: document.getElementById('s-hram3').value.trim(),
     san:   document.getElementById('s-san').value.trim(),
     svyash: document.getElementById('s-svyash').value.trim(),
+    san2:   document.getElementById('s-san2').value.trim(),
+    svyash2: document.getElementById('s-svyash2').value.trim(),
   };
   s.hramLocked = !!(s.hram1 || s.hram2 || s.hram3);
   const url = document.getElementById('s-webapp-url').value.trim();
@@ -396,8 +408,12 @@ function applySettings(s) {
   document.getElementById('f-hram3').value = s.hram3;
   const fsan = document.getElementById('f-san');
   const fsvyash = document.getElementById('f-svyash');
+  const fsan2 = document.getElementById('f-san2');
+  const fsvyash2 = document.getElementById('f-svyash2');
   if (!fsan.value) fsan.value = s.san;
   if (!fsvyash.value) fsvyash.value = s.svyash;
+  if (!fsan2.value) fsan2.value = s.san2;
+  if (!fsvyash2.value) fsvyash2.value = s.svyash2;
   syncHramLockUI();
   updatePreview();
 }
@@ -436,6 +452,8 @@ function openSettings() {
   document.getElementById('s-hram3').value = s.hram3;
   document.getElementById('s-san').value = s.san;
   document.getElementById('s-svyash').value = s.svyash;
+  document.getElementById('s-san2').value = s.san2;
+  document.getElementById('s-svyash2').value = s.svyash2;
   const url = localStorage.getItem(WEBAPP_KEY) || '';
   document.getElementById('s-webapp-url').value = url;
   document.getElementById('modal-settings').classList.add('open'); initWizard();
@@ -481,6 +499,7 @@ function getFormData() {
     imyaSvyat: v('f-imya-svyat'), vChest: v('f-v-chest'), pamyat: v('f-pamyat'),
     vosp1: v('f-vosp1'), vosp2: v('f-vosp2'),
     nomer: v('f-nomer'), san: v('f-san'), svyash: v('f-svyash'),
+    san2: v('f-san2'), svyash2: v('f-svyash2'),
     savedAt: new Date().toLocaleDateString('ru-RU'), syncedToSheets: false
   };
 }
@@ -495,37 +514,44 @@ function setFormData(rec) {
   s('f-imya-svyat', rec.imyaSvyat || rec['Имя по святцам']); s('f-v-chest', rec.vChest || rec['В честь']); s('f-pamyat', rec.pamyat || rec['Память']);
   s('f-vosp1', rec.vosp1 || rec['Восприемник 1']); s('f-vosp2', rec.vosp2 || rec['Восприемница 2']);
   s('f-nomer', rec.nomer || rec['Номер']); s('f-san', rec.san || rec['Сан'] || st.san); s('f-svyash', rec.svyash || rec['Священник'] || st.svyash);
+  s('f-san2', rec.san2 || rec['Сан настоятеля'] || st.san2); s('f-svyash2', rec.svyash2 || rec['Настоятель'] || st.svyash2);
   updatePreview();
 }
 
 // ── PREVIEW ──
-const LAYOUT = (d) => [
+// Координаты сверены с бланком 180x250мм (бланк.jpg): top = положение_строки_на_бланке - 4.5мм
+// (4.5мм ~ высота засечки 16pt Times New Roman над базовой линией при line-height:1)
+const LAYOUT = (d) => {
+  const mesto = [d.hram1, d.hram2, d.hram3].filter(Boolean).join(', ');
+  return [
   // ФИО — centred, 16pt bold, font Times New Roman
-  { x:30,   y:73.55,  w:135, cls:'pf-name pf-center', text: d.imya },
-  { x:30,   y:80.33,  w:135, cls:'pf-name pf-center', text: d.otchestvo },
-  { x:30,   y:87.10,  w:135, cls:'pf-name pf-center', text: d.familia },
-  // Даты — одна строка y=95.14
-  { x:47.52, y:95.14, w:58,  cls:'pf-regular',        text: d.dateBorn },
-  { x:108.0, y:95.14, w:57,  cls:'pf-regular',        text: d.dateKrest },
-  // Храм — три строки центрированные
-  { x:30,   y:103.61, w:135, cls:'pf-regular pf-center', text: d.hram1 },
-  { x:30,   y:109.82, w:135, cls:'pf-regular pf-center', text: d.hram2 },
-  { x:30,   y:116.03, w:135, cls:'pf-regular pf-center', text: d.hram3 },
-  // Имя по святцам — bold, от 92.44mm
-  { x:92.44, y:123.08, w:72, cls:'pf-bold pf-upper',   text: d.imyaSvyat },
-  // В честь — центрированное
-  { x:30,   y:129.72, w:135, cls:'pf-regular pf-center', text: d.vChest },
-  // Память — от 97.52mm
-  { x:97.52, y:136.77, w:67, cls:'pf-regular',         text: d.pamyat },
-  // Номер записи — от 125.02mm
-  { x:125.02,y:145.52, w:40, cls:'pf-regular',         text: d.nomer },
-  // Восприемники — центрированные
-  { x:25,   y:160.20, w:140, cls:'pf-regular pf-center', text: d.vosp1 },
-  { x:25,   y:167.68, w:140, cls:'pf-regular pf-center', text: d.vosp2 },
-  // Священник
-  { x:62.51, y:176.00, w:50, cls:'pf-regular',         text: d.san },
-  { x:25.0,  y:183.48, w:140,cls:'pf-regular',         text: d.svyash },
-];
+  { x:15,    y:83.5,  w:150, cls:'pf-name pf-center', text: d.imya },
+  { x:15,    y:92.5,  w:150, cls:'pf-name pf-center', text: d.otchestvo },
+  { x:15,    y:101.0, w:150, cls:'pf-name pf-center', text: d.familia },
+  // Даты — родился(ась) / крещён(а), одна строка
+  { x:42,    y:109.5, w:46,  cls:'pf-regular',        text: d.dateBorn },
+  { x:120,   y:109.5, w:48,  cls:'pf-regular',        text: d.dateKrest },
+  // Место крещения — одна строка (храм, благочиние, город, епархия)
+  { x:18,    y:120.0, w:150, cls:'pf-regular',        text: mesto },
+  // Имя по святцам — bold, после "с наречением имени"
+  { x:68,    y:140.5, w:100, cls:'pf-bold pf-upper',   text: d.imyaSvyat },
+  // В честь — после "в честь"
+  { x:33,    y:150.0, w:135, cls:'pf-regular',        text: d.vChest },
+  // Память — после "празднуется"
+  { x:95,    y:158.0, w:73,  cls:'pf-regular',        text: d.pamyat },
+  // Номер записи — после "под №"
+  { x:122,   y:166.5, w:46,  cls:'pf-regular',        text: d.nomer },
+  // Восприемники — центрированные, каждый на своей строке
+  { x:15,    y:183.5, w:152, cls:'pf-regular pf-center', text: d.vosp1 },
+  { x:15,    y:193.5, w:152, cls:'pf-regular pf-center', text: d.vosp2 },
+  // Таинство совершил: сан + имя/фамилия (левая колонка)
+  { x:67,    y:203.5, w:26,  cls:'pf-regular',        text: d.san },
+  { x:15,    y:211.5, w:78,  cls:'pf-regular',        text: d.svyash },
+  // Настоятель храма: сан + имя/фамилия (правая колонка)
+  { x:140,   y:203.5, w:25,  cls:'pf-regular',        text: d.san2 },
+  { x:97,    y:211.5, w:70,  cls:'pf-regular',        text: d.svyash2 },
+  ];
+};
 
 function updatePreview() {
   const d = getFormData();
@@ -668,6 +694,8 @@ function clearForm() {
   document.getElementById('f-hram3').value = s.hram3;
   document.getElementById('f-san').value = s.san;
   document.getElementById('f-svyash').value = s.svyash;
+  document.getElementById('f-san2').value = s.san2;
+  document.getElementById('f-svyash2').value = s.svyash2;
   updatePreview();
 }
 
@@ -795,6 +823,8 @@ function doGet(e) {
   document.getElementById('f-hram3').value = s.hram3;
   document.getElementById('f-san').value = s.san;
   document.getElementById('f-svyash').value = s.svyash;
+  document.getElementById('f-san2').value = s.san2;
+  document.getElementById('f-svyash2').value = s.svyash2;
   syncHramLockUI();
   updatePreview();
   renderDB();
