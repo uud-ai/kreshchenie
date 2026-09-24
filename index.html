@@ -519,37 +519,44 @@ function setFormData(rec) {
 }
 
 // ── PREVIEW ──
-// Координаты сверены с бланком 180x250мм (бланк.jpg): top = положение_строки_на_бланке - 4.5мм
-// (4.5мм ~ высота засечки 16pt Times New Roman над базовой линией при line-height:1)
+// Координаты сверены с бланком 180x250мм (бланк.jpg), затем всё поднято на 25мм (2.5см)
+// по результатам реальной печати.
+function withWord(text, stem, word) {
+  if (!text) return text;
+  return new RegExp(stem, 'i').test(text) ? text : (text + ' ' + word);
+}
 const LAYOUT = (d) => {
-  const mesto = [d.hram1, d.hram2, d.hram3].filter(Boolean).join(', ');
+  const hram2 = withWord(d.hram2, 'благочин', 'благочиния');
+  const hram3 = withWord(d.hram3, 'епарх', 'епархия');
   return [
   // ФИО — centred, 16pt bold, font Times New Roman
-  { x:15,    y:83.5,  w:150, cls:'pf-name pf-center', text: d.imya },
-  { x:15,    y:92.5,  w:150, cls:'pf-name pf-center', text: d.otchestvo },
-  { x:15,    y:101.0, w:150, cls:'pf-name pf-center', text: d.familia },
+  { x:15,    y:58.5,  w:150, cls:'pf-name pf-center', text: d.imya },
+  { x:15,    y:67.5,  w:150, cls:'pf-name pf-center', text: d.otchestvo },
+  { x:15,    y:76.0,  w:150, cls:'pf-name pf-center', text: d.familia },
   // Даты — родился(ась) / крещён(а), одна строка
-  { x:42,    y:109.5, w:46,  cls:'pf-regular',        text: d.dateBorn },
-  { x:120,   y:109.5, w:48,  cls:'pf-regular',        text: d.dateKrest },
-  // Место крещения — одна строка (храм, благочиние, город, епархия)
-  { x:18,    y:120.0, w:150, cls:'pf-regular',        text: mesto },
+  { x:42,    y:84.5,  w:46,  cls:'pf-regular',        text: d.dateBorn },
+  { x:120,   y:84.5,  w:48,  cls:'pf-regular',        text: d.dateKrest },
+  // Место крещения — три строки: храм и населённый пункт / благочиние / епархия
+  { x:15,    y:95.0,  w:150, cls:'pf-regular pf-center', text: d.hram1 },
+  { x:15,    y:101.5, w:150, cls:'pf-regular pf-center', text: hram2 },
+  { x:15,    y:108.0, w:150, cls:'pf-regular pf-center', text: hram3 },
   // Имя по святцам — bold, после "с наречением имени"
-  { x:68,    y:140.5, w:100, cls:'pf-bold pf-upper',   text: d.imyaSvyat },
+  { x:68,    y:115.5, w:100, cls:'pf-bold pf-upper',   text: d.imyaSvyat },
   // В честь — после "в честь"
-  { x:33,    y:150.0, w:135, cls:'pf-regular',        text: d.vChest },
+  { x:33,    y:125.0, w:135, cls:'pf-regular',        text: d.vChest },
   // Память — после "празднуется"
-  { x:95,    y:158.0, w:73,  cls:'pf-regular',        text: d.pamyat },
+  { x:95,    y:133.0, w:73,  cls:'pf-regular',        text: d.pamyat },
   // Номер записи — после "под №"
-  { x:122,   y:166.5, w:46,  cls:'pf-regular',        text: d.nomer },
+  { x:122,   y:141.5, w:46,  cls:'pf-regular',        text: d.nomer },
   // Восприемники — центрированные, каждый на своей строке
-  { x:15,    y:183.5, w:152, cls:'pf-regular pf-center', text: d.vosp1 },
-  { x:15,    y:193.5, w:152, cls:'pf-regular pf-center', text: d.vosp2 },
+  { x:15,    y:158.5, w:152, cls:'pf-regular pf-center', text: d.vosp1 },
+  { x:15,    y:168.5, w:152, cls:'pf-regular pf-center', text: d.vosp2 },
   // Таинство совершил: сан + имя/фамилия (левая колонка)
-  { x:67,    y:203.5, w:26,  cls:'pf-regular',        text: d.san },
-  { x:15,    y:211.5, w:78,  cls:'pf-regular',        text: d.svyash },
+  { x:67,    y:178.5, w:26,  cls:'pf-regular',        text: d.san },
+  { x:15,    y:186.5, w:78,  cls:'pf-regular',        text: d.svyash },
   // Настоятель храма: сан + имя/фамилия (правая колонка)
-  { x:140,   y:203.5, w:25,  cls:'pf-regular',        text: d.san2 },
-  { x:97,    y:211.5, w:70,  cls:'pf-regular',        text: d.svyash2 },
+  { x:140,   y:178.5, w:25,  cls:'pf-regular',        text: d.san2 },
+  { x:97,    y:186.5, w:70,  cls:'pf-regular',        text: d.svyash2 },
   ];
 };
 
