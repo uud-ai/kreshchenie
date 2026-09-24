@@ -70,6 +70,11 @@
   .field-group input:focus { border-color: var(--blue-mid); box-shadow: 0 0 0 2px rgba(45,90,158,0.12); }
   .field-group input.date-input { letter-spacing: 1px; }
   .field-group input.date-input::placeholder { letter-spacing: 0; }
+  .field-group input:disabled { background: var(--parchment-dark); color: var(--ink-mid); cursor: default; }
+  .hram-actions { display: flex; align-items: center; gap: 8px; margin: 2px 0 4px; flex-wrap: wrap; }
+  .hram-save-btn, .hram-edit-btn { font-family: 'EB Garamond', serif; font-size: 12px; padding: 4px 10px; border-radius: 3px; cursor: pointer; border: 1px solid var(--gold-light); background: var(--parchment-dark); color: var(--ink-mid); transition: background 0.2s; }
+  .hram-save-btn:hover, .hram-edit-btn:hover { background: #E5D9B8; }
+  .hram-saved-badge { font-size: 12px; color: #2E7D32; display: none; align-items: center; gap: 4px; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .section-title { font-family: 'Playfair Display', serif; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--blue-church); padding: 4px 0 2px; border-bottom: 1px solid var(--gold-light); margin-top: 2px; }
   .btn-row { display: flex; gap: 8px; margin-top: 4px; }
@@ -164,9 +169,9 @@
       <div class="settings-grid">
         <div class="sfield" style="grid-column:1/-1"><label>Название приложения (заголовок)</label><input id="s-app-title" placeholder="Название приложения"></div>
         <div class="sfield" style="grid-column:1/-1"><label>Подзаголовок (храм, город)</label><input id="s-app-subtitle" placeholder="Название храма · населённый пункт"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 1 в свидетельстве)</label><input id="s-hram1" placeholder="храме (название храма)"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 2)</label><input id="s-hram2" placeholder="город/село, район"></div>
-        <div class="sfield" style="grid-column:1/-1"><label>Храм (строка 3 — епархия)</label><input id="s-hram3" placeholder="епархия, митрополия"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Храм, населённый пункт (строка 1)</label><input id="s-hram1" placeholder="храм, населённый пункт"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Благочиние (строка 2)</label><input id="s-hram2" placeholder="благочиние"></div>
+        <div class="sfield" style="grid-column:1/-1"><label>Епархия (строка 3)</label><input id="s-hram3" placeholder="епархия"></div>
       </div>
     </div>
 
@@ -290,9 +295,14 @@
       </div>
 
       <div class="section-title">Место крещения</div>
-      <div class="field-group"><label>Храм (строка 1)</label><input type="text" id="f-hram1" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Храм (строка 2)</label><input type="text" id="f-hram2" oninput="updatePreview()"></div>
-      <div class="field-group"><label>Храм (строка 3)</label><input type="text" id="f-hram3" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Храм, населённый пункт</label><input type="text" id="f-hram1" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Благочиние</label><input type="text" id="f-hram2" oninput="updatePreview()"></div>
+      <div class="field-group"><label>Епархия</label><input type="text" id="f-hram3" oninput="updatePreview()"></div>
+      <div class="hram-actions">
+        <button type="button" class="hram-save-btn" id="hram-save-btn" onclick="saveHramBlock()">💾 Запомнить</button>
+        <button type="button" class="hram-edit-btn" id="hram-edit-btn" style="display:none" onclick="editHramBlock()">✏️ Редактировать</button>
+        <span class="hram-saved-badge" id="hram-saved-badge">✓ Сохранено — подставляется автоматически</span>
+      </div>
 
       <div class="section-title">Крестильное имя</div>
       <div class="field-group"><label>Имя по святцам</label><input type="text" id="f-imya-svyat" placeholder="Имя по святцам" oninput="updatePreview()" style="text-transform:uppercase"></div>
@@ -353,11 +363,12 @@ let currentSource = 'all';
 
 // ── SETTINGS ──
 function defaultSettings() {
-  return { appTitle:'Свидетельства о совершении таинства Крещения', appSubtitle:'', hram1:'', hram2:'', hram3:'', san:'', svyash:'' };
+  return { appTitle:'Свидетельства о совершении таинства Крещения', appSubtitle:'', hram1:'', hram2:'', hram3:'', hramLocked:false, san:'', svyash:'' };
 }
 function loadSettings() { try { return { ...defaultSettings(), ...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}') }; } catch(e) { return defaultSettings(); } }
 function saveSettings() {
   const s = {
+    ...loadSettings(),
     appTitle:  document.getElementById('s-app-title').value.trim() || defaultSettings().appTitle,
     appSubtitle: document.getElementById('s-app-subtitle').value.trim(),
     hram1: document.getElementById('s-hram1').value.trim(),
@@ -366,6 +377,7 @@ function saveSettings() {
     san:   document.getElementById('s-san').value.trim(),
     svyash: document.getElementById('s-svyash').value.trim(),
   };
+  s.hramLocked = !!(s.hram1 || s.hram2 || s.hram3);
   const url = document.getElementById('s-webapp-url').value.trim();
   if (url) localStorage.setItem(WEBAPP_KEY, url);
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
@@ -378,18 +390,41 @@ function saveSettings() {
 function applySettings(s) {
   document.getElementById('app-title').textContent = s.appTitle || defaultSettings().appTitle;
   document.getElementById('app-subtitle').textContent = s.appSubtitle || '';
-  // Pre-fill form fields from settings
-  const f1 = document.getElementById('f-hram1');
-  const f2 = document.getElementById('f-hram2');
-  const f3 = document.getElementById('f-hram3');
+  // "Место крещения" всегда отражает сохранённые данные храма
+  document.getElementById('f-hram1').value = s.hram1;
+  document.getElementById('f-hram2').value = s.hram2;
+  document.getElementById('f-hram3').value = s.hram3;
   const fsan = document.getElementById('f-san');
   const fsvyash = document.getElementById('f-svyash');
-  if (!f1.value) f1.value = s.hram1;
-  if (!f2.value) f2.value = s.hram2;
-  if (!f3.value) f3.value = s.hram3;
   if (!fsan.value) fsan.value = s.san;
   if (!fsvyash.value) fsvyash.value = s.svyash;
+  syncHramLockUI();
   updatePreview();
+}
+
+// ── МЕСТО КРЕЩЕНИЯ: сохранить один раз / редактировать ──
+function syncHramLockUI() {
+  const s = loadSettings();
+  const locked = !!s.hramLocked;
+  ['f-hram1','f-hram2','f-hram3'].forEach(id => document.getElementById(id).disabled = locked);
+  document.getElementById('hram-save-btn').style.display = locked ? 'none' : 'inline-block';
+  document.getElementById('hram-edit-btn').style.display = locked ? 'inline-block' : 'none';
+  document.getElementById('hram-saved-badge').style.display = locked ? 'inline-flex' : 'none';
+}
+function saveHramBlock() {
+  const s = loadSettings();
+  s.hram1 = v('f-hram1'); s.hram2 = v('f-hram2'); s.hram3 = v('f-hram3');
+  s.hramLocked = true;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  syncHramLockUI();
+  toast('Место крещения сохранено ✓');
+}
+function editHramBlock() {
+  const s = loadSettings();
+  s.hramLocked = false;
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  syncHramLockUI();
+  document.getElementById('f-hram1').focus();
 }
 
 function openSettings() {
@@ -760,6 +795,7 @@ function doGet(e) {
   document.getElementById('f-hram3').value = s.hram3;
   document.getElementById('f-san').value = s.san;
   document.getElementById('f-svyash').value = s.svyash;
+  syncHramLockUI();
   updatePreview();
   renderDB();
   initSheetsStatus();
